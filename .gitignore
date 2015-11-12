@@ -1,3 +1,12 @@
+# Android Studio
+TalkEmote/.gradle
+TalkEmote/local.properties
+TalkEmote/.idea/workspace.xml
+TalkEmote/.idea/libraries
+TalkEmote/.DS_Store
+TalkEmote/build
+TalkEmote/captures
+
 # Built application files
 *.apk
 *.ap_
