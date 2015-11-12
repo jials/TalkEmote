@@ -140,7 +140,7 @@ public class MainActivity extends Activity {
         int myBitsPerSample = 16;
         int myFormat = 1;
         long myChannels = 1;
-        long mySampleRate = 22100;
+        long mySampleRate = 44100;
         long myByteRate = mySampleRate * myChannels * myBitsPerSample/8;
         int myBlockAlign = (int) (myChannels * myBitsPerSample/8);
 
