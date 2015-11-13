@@ -54,11 +54,11 @@ public class EmotionRecognizerMain {
 			while ((line = br.readLine()) != null) {
 				if (linenum == 0) {
 					if (line.equals("Google Speech Recognition could not understand audio")) {
-						emotionBuffer.append("message:\n");
+						emotionBuffer.append("message:|");
 						emotionBuffer.append("emotion:" + emotion);
 						return emotionBuffer.toString();
 					} else {
-						emotionBuffer.append("message:" + line  + "\n");
+						emotionBuffer.append("message:" + line  + "|");
 					}
 				} else if (linenum == 1) {
 					line = line.trim();

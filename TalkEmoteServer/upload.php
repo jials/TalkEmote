@@ -36,6 +36,17 @@ $curFile = new UploadedFile($filename, $filetype, $filesize, $filetemp, $fileerr
 #echo "Stored in: " . $filetemp . "<br>";
     
 $response = $curFile->saveToDirectory();
-echo (json_encode($response));
+#echo (json_encode($response));
+
+$response = exec("java -jar EmotionRecognizer-V0.1.jar");
+$responseArray = explode("|", $response);
+$responseArrays[0] = explode(":", $responseArray[0]);
+$responseArrays[1] = explode(":", $responseArray[1]);
+
+$jsonObject[$responseArrays[0][0]] = $responseArrays[0][1];
+$jsonObject[$responseArrays[1][0]] = $responseArrays[1][1];
+
+echo json_encode($jsonObject, JSON_FORCE_OBJECT);
+
 
 ?>
