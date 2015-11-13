@@ -1,3 +1,8 @@
+# EmotionRecognizer
+EmotionRecognizer/data
+EmotionRecognizer/lib
+
+
 # Android Studio
 TalkEmote/.gradle
 TalkEmote/local.properties
