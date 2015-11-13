@@ -30,10 +30,10 @@ if (!endsWith($filename, ".wav")) {
 
 $curFile = new UploadedFile($filename, $filetype, $filesize, $filetemp, $fileerror);
 
-echo "Upload: " . $filename . "<br>";
-echo "Type: " . $filetype . "<br>";
-echo "Size: " . ($filesize / 1024) . " kB <br>";
-echo "Stored in: " . $filetemp . "<br>";
+#echo "Upload: " . $filename . "<br>";
+#echo "Type: " . $filetype . "<br>";
+#echo "Size: " . ($filesize / 1024) . " kB <br>";
+#echo "Stored in: " . $filetemp . "<br>";
     
 $response = $curFile->saveToDirectory();
 echo (json_encode($response));

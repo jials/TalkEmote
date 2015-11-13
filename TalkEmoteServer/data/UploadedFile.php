@@ -16,7 +16,12 @@ class UploadedFile {
 	const DOT = ".";
 	
 	public function __construct($filename, $filetype, $filesize, $filetemp, $fileerror) {
-		$this->_filename = "test.wav";
+        $filename = "test.wav";
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+        
+		$this->_filename = $filename;
 		$this->_filetype = $filetype;
 		$this->_filesize = $filesize;
 		$this->_filetemp = $filetemp;
@@ -26,6 +31,7 @@ class UploadedFile {
 	}
 	
 	public function saveToDirectory() {
+        
 		$maxFileSize = self::MAX_FILE_SIZE;
 		if ($this->_filesize > $maxFileSize) {
 			$response ["success"] = 0;
