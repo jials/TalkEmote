@@ -19,7 +19,6 @@ import SignalProcess.WaveIO;
 public class AudioFeaturesGenerator {
 	public static final String EXT_TXT = ".txt";
 	public static final String EXT_WAV = ".wav";
-	private static final String FILEPATH_AUDIO_TRAIN = "data/input/train";
 	private static final String FILEPATH_EMOTION_TRAIN = "data/input/EmotionSpeechDatabase_Toronto";
 	public static final String FILEPATH_FEATURE_OUT = "data/feature";
 	public static final String EMOTION_ZERO_CROSSING = FILEPATH_FEATURE_OUT + "/emotion_zerocrossing.txt";
@@ -323,30 +322,10 @@ public class AudioFeaturesGenerator {
 		return f;
 	}
 	
-	@SuppressWarnings("unused")
-	private static void trainAudio(AudioFeaturesGenerator featureGenerator) {
-		File audioTrain = new File(FILEPATH_AUDIO_TRAIN);
-		File[] audioFiles = audioTrain.listFiles();
-		File audioMfccFile = featureGenerator.createFile(FILEPATH_FEATURE_OUT + "/audio_mfcc.txt");
-		File audioEnergyFile = featureGenerator.createFile(FILEPATH_FEATURE_OUT + "/audio_energy.txt");
-		File audioSpectrumFile = featureGenerator.createFile(FILEPATH_FEATURE_OUT + "/audio_spectrum.txt");
-		File audioZCFile = featureGenerator.createFile(FILEPATH_FEATURE_OUT + "/audio_zerocrossing.txt");
-		
-		if (!featureGenerator.computeMFCC(audioFiles, audioMfccFile.getAbsolutePath())) {
-			System.exit(-1);
-		} else if (!featureGenerator.computeEnergy(audioFiles, audioEnergyFile.getAbsolutePath())) {
-			System.exit(-1);
-		} else if (!featureGenerator.computeMagnitudeSpectrum(audioFiles, audioSpectrumFile.getAbsolutePath())) {
-			System.exit(-1);
-		} else if (!featureGenerator.computeZeroCrossing(audioFiles, audioZCFile.getAbsolutePath())) {
-			System.exit(-1);
-		} 
-	}
 	
 	public static void main(String[] args) {
 		AudioFeaturesGenerator featureGenerator = new AudioFeaturesGenerator();
 
-		//trainAudio(featureGenerator);
 		//trainEmotion(featureGenerator);
 		trainIemocapEmotion(featureGenerator);
 		//trainIemocapSegmentedEmotion(featureGenerator);
@@ -369,6 +348,7 @@ public class AudioFeaturesGenerator {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private static void trainIemocapSegmentedEmotion(AudioFeaturesGenerator featureGenerator) {
 		File emotionTrain = new File(FILEPATH_AUDIO_IEMOCAP_SEGMENT);
 		File[] emotionFiles = emotionTrain.listFiles();

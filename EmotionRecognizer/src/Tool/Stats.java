@@ -59,10 +59,10 @@ public class Stats {
   // This plots sin(x) and cos(x) with linespoints, using the same line type
   // but different point types:
   // plot sin(x) with linesp lt 1 pt 3, cos(x) with linesp lt 1 pt 4
-  public static double[] v2a(Vector v) {
+  public static double[] v2a(Vector<?> v) {
     double[] d = new double[v.size()];
     int i = 0;
-    for (Enumeration e = v.elements(); e.hasMoreElements();)
+    for (Enumeration<?> e = v.elements(); e.hasMoreElements();)
       d[i++] = ((Number) e.nextElement()).doubleValue();
     return d;
   }
@@ -131,21 +131,6 @@ public class Stats {
     return sumsq / (v.length);
     // return 1.12; this was done to test a discrepancy with Business
     // Statistics
-  }
-
-  /**
-   * this alternative version was used to check correctness
-   */
-
-  private static double variance2(double[] v) {
-    double mu = mean(v);
-    double sumsq = 0.0;
-    for (int i = 0; i < v.length; i++)
-      sumsq += sqr(v[i]);
-    System.out.println(sumsq + " : " + mu);
-    double diff = (sumsq - v.length * sqr(mu));
-    System.out.println("Diff = " + diff);
-    return diff / (v.length);
   }
 
   /**

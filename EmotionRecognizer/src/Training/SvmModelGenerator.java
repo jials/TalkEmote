@@ -101,7 +101,7 @@ public class SvmModelGenerator {
 		param.kernel_type = svm_parameter.LINEAR;
 		param.gamma = 1;
 		param.eps = 0.001;
-		param.cache_size = 100;
+		param.cache_size = 500;
 		param.C = 1;
 		param.nu = 0.5;
 		param.shrinking = 1;
