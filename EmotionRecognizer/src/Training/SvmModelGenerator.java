@@ -31,7 +31,7 @@ public class SvmModelGenerator {
 	}
 	
 	private static final String EXT = ".wav";
-	public static final String SVM_MODEL_FILE = AudioFeaturesGenerator.FILEPATH_FEATURE_OUT + "/svm_model.txt";
+	public static final String SVM_MODEL_FILE = "svm_model.txt";
 		
 	svm_model _model = null;
 	public SvmModelGenerator() {

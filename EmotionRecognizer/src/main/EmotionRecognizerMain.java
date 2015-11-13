@@ -24,7 +24,7 @@ public class EmotionRecognizerMain {
 		"neutral",
 		"disgust"
 	};
-	
+		
 	public static void main(String[] args) {
 		SearchDemo search = new SearchDemo();
 		File emotionFile = new File(DEFAULT_FILE);
@@ -48,26 +48,25 @@ public class EmotionRecognizerMain {
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
-			String line;
+			String line;	
 
 			int linenum = 0;
 			while ((line = br.readLine()) != null) {
 				if (linenum == 0) {
 					if (line.equals("Google Speech Recognition could not understand audio")) {
-						emotionBuffer.append("feeling ");
-						emotionBuffer.append(emotion);
+						emotionBuffer.append("message:\n");
+						emotionBuffer.append("emotion:" + emotion);
 						return emotionBuffer.toString();
 					} else {
-						emotionBuffer.append(line);
+						emotionBuffer.append("message:" + line  + "\n");
 					}
 				} else if (linenum == 1) {
-					emotionBuffer.append(" --- feeling ");
 					line = line.trim();
 					
 					if (emotionMap.get(emotion).equals(line)) {
-						emotionBuffer.append(emotion);
+						emotionBuffer.append("emotion:" + emotion);
 					} else {
-						emotionBuffer.append("different");
+						emotionBuffer.append("emotion:different");
 					}
 					
 				} else {
