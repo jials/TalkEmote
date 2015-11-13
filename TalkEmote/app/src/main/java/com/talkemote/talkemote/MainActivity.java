@@ -24,8 +24,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -34,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -95,9 +100,8 @@ public class MainActivity extends Activity {
             Thread analysingAudioThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO: Send the data to server
                     try {
-                        sendAudioFileToServer();
+                        sendAudioFileToServerAndResponse();
                         Thread.sleep(4000);
                         loadingDialogHandler.sendEmptyMessage(0);
                     } catch (InterruptedException e) {
@@ -210,7 +214,7 @@ public class MainActivity extends Activity {
         convertPcmToWav();
     }
 
-    private void sendAudioFileToServer() {
+    private JSONObject sendAudioFileToServerAndResponse() {
         String boundary = "*****";
         String lineEnd = "\r\n";
         String twoHyphens = "--";
@@ -268,22 +272,34 @@ public class MainActivity extends Activity {
                     + serverResponseMessage + ": " + serverResponseCode);
 
             if (serverResponseCode == 200) {
+                // http://stackoverflow.com/questions/6511880/how-to-parse-a-json-input-stream
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                // TODO: receive JSON from server
+                BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+                StringBuilder responseStrBuilder = new StringBuilder();
+
+                String inputStr;
+                while ((inputStr = br.readLine()) != null) {
+                    responseStrBuilder.append(inputStr);
+                }
+
+                JSONObject res = new JSONObject(responseStrBuilder.toString());
+                Log.i("uploadFile", "message: " + res.getString("message") + " emotion: " + res.getString("emotion"));
+                return res;
             }
 
             fis.close();
             dos.flush();
             dos.close();
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
+        return new JSONObject();
     }
 
     // Toggle between recording view and idle view
