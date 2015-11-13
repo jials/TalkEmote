@@ -15,9 +15,7 @@ import Distance.RBFKernel;
 import Tool.SortHashMapByValue;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.*;
 
 /**
@@ -64,12 +62,7 @@ public class SearchDemo {
 	/**
      * Please replace the 'trainPath' with the specific path of train set in your PC.
      */
-    protected final static String trainPath = "data/input/train";
 
-    private HashMap<String, double[]> _audioEnergy = null;
-    private HashMap<String, double[]> _audioMfcc = null;
-    private HashMap<String, double[]> _audioSpectrum = null;
-    private HashMap<String, double[]> _audioZeroCrossing = null;
     private HashMap<String, double[]> _emotionEnergy = null;
     private HashMap<String, double[]> _emotionMfcc = null;
     private HashMap<String, double[]> _emotionSpectrum = null;
@@ -79,60 +72,6 @@ public class SearchDemo {
 
     }
 
-    /***
-     * Get the feature of train set via the specific feature extraction method, and write it into offline file for efficiency;
-     * @return the map of training features, Key is the name of file, Value is the array/vector of features.
-     * 
-     * This method has been deprecated as there is a later method defined in AudioFeaturesGenerator.java
-     * @deprecated
-     */
-    public HashMap<String,double[]> trainFeatureList(){
-        File trainFolder = new File(trainPath);
-        File[] trainList = trainFolder.listFiles();
-
-        HashMap<String, double[]> featureList = new HashMap<>();
-        try {
-
-            FileWriter fw = new FileWriter("data/feature/allFeature.txt");
-
-            for (int i = 0; i < trainList.length; i++) {
-                WaveIO waveIO = new WaveIO();
-                short[] signal = waveIO.readWave(trainList[i].getAbsolutePath());
-
-                /**
-                 * Example of extracting feature via MagnitudeSpectrum, modify it by yourself.
-                 */
-                MagnitudeSpectrum ms = new MagnitudeSpectrum();
-                double[] msFeature = ms.getFeature(signal);
-
-                /**
-                 * Write the extracted feature into offline file;
-                 */
-                featureList.put(trainList[i].getName(), msFeature);
-
-                String line = trainList[i].getName() + "\t";
-                for (double f: msFeature){
-                    line += f + "\t";
-                }
-
-                fw.append(line+"\n");
-
-                System.out.println("@=========@" + i);
-            }
-            fw.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        try {
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-        return featureList;
-    }
 
     /***
      * Get the distances between features of the selected query audio and ones of the train set;
@@ -141,8 +80,7 @@ public class SearchDemo {
      * @return the top 20 similar audio files;
      */
     public ArrayList<String> resultListOfEnergy(String query, boolean isAudio, Distance distance){
-    	if (_audioEnergy == null) {
-        	_audioEnergy = readFeature("data/feature/audio_energy.txt");
+    	if (_emotionEnergy == null) {
         	_emotionEnergy = readFeature("data/feature/emotion_energy.txt");
     	}
     	
@@ -158,11 +96,7 @@ public class SearchDemo {
          */
         HashMap<String, double[]> trainFeatureList = null;
         
-        if (isAudio) {
-        	trainFeatureList = _audioEnergy;
-        } else {
-        	trainFeatureList = _emotionEnergy;
-        }
+    	trainFeatureList = _emotionEnergy;
 
 //        System.out.println(trainFeatureList.size() + "=====");
         switch (distance) {
@@ -223,8 +157,7 @@ public class SearchDemo {
      * @return the top 20 similar audio files;
      */
     public ArrayList<String> resultListOfMfcc(String query, boolean isAudio, Distance distance){
-        if (_audioMfcc == null) {
-        	_audioMfcc = readFeature("data/feature/audio_mfcc.txt");
+        if (_emotionMfcc == null) {
         	_emotionMfcc = readFeature("data/feature/emotion_mfcc.txt");
         }
     	
@@ -240,12 +173,8 @@ public class SearchDemo {
          * Load the offline file of features (the result of function 'trainFeatureList()'), modify it by yourself please;
          */
         HashMap<String, double[]> trainFeatureList = null;
-        
-        if (isAudio) {
-        	trainFeatureList = _audioMfcc;
-        } else {
-        	trainFeatureList = _emotionMfcc;
-        }
+
+    	trainFeatureList = _emotionMfcc;
 
 //        System.out.println(trainFeatureList.size() + "=====");
         switch (distance) {
@@ -307,8 +236,7 @@ public class SearchDemo {
      * @return the top 20 similar audio files;
      */
     public ArrayList<String> resultListOfZeroCrossing(String query, boolean isAudio, Distance distance){
-    	if (_audioZeroCrossing == null) {
-        	_audioZeroCrossing = readFeature("data/feature/audio_zerocrossing.txt");
+    	if (_emotionZeroCrossing == null) {
         	_emotionZeroCrossing = readFeature("data/feature/emotion_zerocrossing.txt");
     	}
     	
@@ -324,11 +252,8 @@ public class SearchDemo {
          */
         HashMap<String, double[]> trainFeatureList = null;
         
-        if (isAudio) {
-        	trainFeatureList = _audioZeroCrossing;
-        } else {
-        	trainFeatureList = _emotionZeroCrossing;
-        }
+    	trainFeatureList = _emotionZeroCrossing;
+
 
 //        System.out.println(trainFeatureList.size() + "=====");
         switch (distance) {
@@ -389,8 +314,7 @@ public class SearchDemo {
      * @return the top 20 similar audio files;
      */
     public ArrayList<String> resultListOfSpectrum(String query, boolean isAudio, Distance distance){
-    	if (_audioSpectrum == null) {
-        	_audioSpectrum = readFeature("data/feature/audio_spectrum.txt");
+    	if (_emotionSpectrum == null) {
         	_emotionSpectrum = readFeature("data/feature/emotion_spectrum.txt");
     	}
     	
@@ -406,11 +330,8 @@ public class SearchDemo {
          */
         HashMap<String, double[]> trainFeatureList = null;
         
-        if (isAudio) {
-        	trainFeatureList = _audioSpectrum;
-        } else {
-        	trainFeatureList = _emotionSpectrum;
-        }
+    	trainFeatureList = _emotionSpectrum;
+
 
 //        System.out.println(trainFeatureList.size() + "=====");
         switch (distance) {
