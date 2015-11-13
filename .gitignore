@@ -3,7 +3,7 @@ EmotionRecognizer/data
 EmotionRecognizer/lib
 EmotionRecognizer/opensmile
 EmotionRecognizer/bin
-
+EmotionRecognizer/release
 
 # Android Studio
 TalkEmote/.gradle
