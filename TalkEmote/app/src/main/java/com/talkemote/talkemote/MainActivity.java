@@ -64,6 +64,7 @@ public class MainActivity extends Activity {
     private Handler loadingDialogHandler;
 
     private ByteArrayOutputStream recData;
+    private JSONObject res;
 
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
@@ -84,13 +85,7 @@ public class MainActivity extends Activity {
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/sample.wav";
         isRecording = false;
 
-        loadingDialogHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                loadingDialog.dismiss();
-                changeView();
-            }
-        };
+        loadingDialogHandler = new Handler();
     }
 
     public void btnSpeak(View view) {
@@ -102,16 +97,27 @@ public class MainActivity extends Activity {
                 public void run() {
                     try {
                         sendAudioFileToServerAndResponse();
+                        final String msg = res.getString("message") + " --- feeling " + res.getString("emotion");
                         Thread.sleep(4000);
-                        loadingDialogHandler.sendEmptyMessage(0);
+                        loadingDialog.dismiss();
+                        loadingDialogHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateTextbox(msg);
+                            }
+                        });
                     } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }, "analysingAudio Thread");
             analysingAudioThread.start();
+            changeView();
         } else {
             startRecording();
+            isRecording = true;
             changeView();
         }
     }
@@ -214,7 +220,7 @@ public class MainActivity extends Activity {
         convertPcmToWav();
     }
 
-    private JSONObject sendAudioFileToServerAndResponse() {
+    private void sendAudioFileToServerAndResponse() {
         String boundary = "*****";
         String lineEnd = "\r\n";
         String twoHyphens = "--";
@@ -282,9 +288,9 @@ public class MainActivity extends Activity {
                     responseStrBuilder.append(inputStr);
                 }
 
-                JSONObject res = new JSONObject(responseStrBuilder.toString());
+                res = new JSONObject(responseStrBuilder.toString());
                 Log.i("uploadFile", "message: " + res.getString("message") + " emotion: " + res.getString("emotion"));
-                return res;
+
             }
 
             fis.close();
@@ -299,18 +305,23 @@ public class MainActivity extends Activity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return new JSONObject();
     }
 
     // Toggle between recording view and idle view
     // http://stackoverflow.com/questions/4446105/is-it-possible-to-do-transition-animations-when-changing-views-in-the-same-activ
     private void changeView() {
         LayoutInflater inflator = getLayoutInflater();
-        View view = inflator.inflate(isRecording?R.layout.activity_main:R.layout.activity_recording, null, false);
+        Log.i("isRecording", "isRecording: " + isRecording);
+        View view = inflator.inflate(isRecording?R.layout.activity_recording:R.layout.activity_main, null, false);
         view.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
         setContentView(view);
     }
 
+    // Update the textbox
+    private void updateTextbox(String msg) {
+        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        txtSpeechInput.setText(msg);
+    }
     /**
      * Showing google speech input dialog
      * */
