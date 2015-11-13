@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -23,24 +24,28 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
 
     // Server IP Address and Port
-    private static final String HOST = "localhost";
-    private static final int PORT = 8080;
+    private static final String HOST = "http://128.199.130.147/upload.php";
 
     // 44.1k sample rate
     private static final int RECORDER_SAMPLERATE = 44100;
@@ -54,9 +59,6 @@ public class MainActivity extends Activity {
     private Handler loadingDialogHandler;
 
     private ByteArrayOutputStream recData;
-    private Context context;
-
-    private InetSocketAddress addr;
 
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
@@ -75,10 +77,8 @@ public class MainActivity extends Activity {
 
         // Prepare AudioRecord
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/sample.wav";
-//        outputFile = "/sdcard/sample.wav";
         isRecording = false;
 
-        // addr = new InetSocketAddress(HOST, PORT);
         loadingDialogHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -97,6 +97,7 @@ public class MainActivity extends Activity {
                 public void run() {
                     // TODO: Send the data to server
                     try {
+                        sendAudioFileToServer();
                         Thread.sleep(4000);
                         loadingDialogHandler.sendEmptyMessage(0);
                     } catch (InterruptedException e) {
@@ -152,7 +153,6 @@ public class MainActivity extends Activity {
 
         try {
             OutputStream os = new FileOutputStream(new File(outputFile));
-//            OutputStream os = openFileOutput("sample.wav", Context.MODE_PRIVATE);
             BufferedOutputStream bos = new BufferedOutputStream(os);
             DataOutputStream outFile = new DataOutputStream(bos);
 
@@ -208,6 +208,82 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         convertPcmToWav();
+    }
+
+    private void sendAudioFileToServer() {
+        String boundary = "*****";
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        File file = new File(outputFile);
+        String fileName = "sample.wav";
+
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024;
+
+        try {
+            URL url = new URL(HOST);
+            FileInputStream fis = new FileInputStream(file);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoInput(true); // Allow Inputs
+            conn.setDoOutput(true); // Allow Outputs
+            conn.setUseCaches(false); // Don't use a Cached Copy
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            conn.setRequestProperty("uploaded_file", fileName);
+
+            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
+                            + fileName + "\"" + lineEnd);
+
+            dos.writeBytes(lineEnd);
+
+            // create a buffer of  maximum size
+            bytesAvailable = fis.available();
+
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+
+            // read file and write it into form...
+            bytesRead = fis.read(buffer, 0, bufferSize);
+
+            while (bytesRead > 0) {
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fis.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fis.read(buffer, 0, bufferSize);
+            }
+
+            // send multipart form data necesssary after file data...
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+            // Responses from the server (code and message)
+            int serverResponseCode = conn.getResponseCode();
+            String serverResponseMessage = conn.getResponseMessage();
+
+            Log.i("uploadFile", "HTTP Response is : "
+                    + serverResponseMessage + ": " + serverResponseCode);
+
+            if (serverResponseCode == 200) {
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                // TODO: receive JSON from server
+            }
+
+            fis.close();
+            dos.flush();
+            dos.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     // Toggle between recording view and idle view
