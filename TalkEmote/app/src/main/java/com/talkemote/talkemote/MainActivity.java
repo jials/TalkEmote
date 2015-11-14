@@ -24,6 +24,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -322,6 +327,38 @@ public class MainActivity extends Activity {
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         txtSpeechInput.setText(msg);
     }
+
+    // Publish content inside textbox to Facebook
+    public void publishStatusUpdateToFacebook(View view) {
+        Toast.makeText(getApplicationContext(),
+                "Publishing to Facebook...", Toast.LENGTH_SHORT).show();
+        String msg = txtSpeechInput.getText().toString();
+        Bundle params = new Bundle();
+        params.putString("message", msg);
+        JSONObject privacy = new JSONObject();
+        try {
+            privacy.put("value", "SELF");
+        } catch (JSONException e) {
+
+            e.printStackTrace();
+        }
+        /* make the API call */
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me/feed",
+                params,
+                HttpMethod.POST,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                    /* handle the result */
+                        Log.i("Facebook GraphResponse", String.valueOf(response));
+                        Toast.makeText(getApplicationContext(),
+                                "Posted to Facebook successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ).executeAsync();
+    }
+
     /**
      * Showing google speech input dialog
      * */

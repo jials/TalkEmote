@@ -33,6 +33,7 @@
             android:textColor="@color/white"
             android:textSize="15dp"
             android:textStyle="normal" />
+
     </LinearLayout>
 
     <FrameLayout
@@ -50,6 +51,16 @@
             android:textSize="22sp"
             android:textStyle="normal"
             android:hint="@string/textSpeechInputString" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="170dp"
+            android:nestedScrollingEnabled="false"
+            android:onClick="publishStatusUpdateToFacebook"
+            android:text="@string/publish_button" />
 
     </FrameLayout>
 
