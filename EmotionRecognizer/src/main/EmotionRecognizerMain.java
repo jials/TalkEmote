@@ -50,7 +50,7 @@ public class EmotionRecognizerMain {
 			BufferedReader br = new BufferedReader(isr);
 			String line;	
 
-			int linenum = 0;
+			int linenum = 0; 
 			while ((line = br.readLine()) != null) {
 				if (linenum == 0) {
 					if (line.equals("Google Speech Recognition could not understand audio")) {
@@ -58,6 +58,9 @@ public class EmotionRecognizerMain {
 						emotionBuffer.append("emotion:" + emotion);
 						return emotionBuffer.toString();
 					} else {
+						char front = line.charAt(0);
+						char frontCap = Character.toUpperCase(front);
+						line = line.replaceFirst(front + "", frontCap + "");
 						emotionBuffer.append("message:" + line  + "|");
 					}
 				} else if (linenum == 1) {
