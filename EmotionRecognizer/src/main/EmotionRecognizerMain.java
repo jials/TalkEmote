@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import Search.SearchDemo;
+import search.SearchDemo;
 
 public class EmotionRecognizerMain {
 	private static final String DEFAULT_FILE = "test.wav";
