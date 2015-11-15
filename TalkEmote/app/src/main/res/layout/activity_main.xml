@@ -32,7 +32,8 @@
             android:text="@string/tap_on_mic_deactivated"
             android:textColor="@color/white"
             android:textSize="15dp"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:id="@+id/tapOnMic" />
 
     </LinearLayout>
 
@@ -42,6 +43,16 @@
         android:paddingLeft="40dp"
         android:paddingRight="40dp">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="200dp"
+            android:nestedScrollingEnabled="false"
+            android:onClick="publishStatusUpdateToFacebook"
+            android:text="@string/publish_button" />
+
         <EditText
             android:id="@+id/txtSpeechInput"
             android:layout_width="fill_parent"
@@ -50,17 +61,8 @@
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="normal"
-            android:hint="@string/textSpeechInputString" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="170dp"
-            android:nestedScrollingEnabled="false"
-            android:onClick="publishStatusUpdateToFacebook"
-            android:text="@string/publish_button" />
+            android:hint="@string/textSpeechInputString"
+            android:layout_gravity="right|top" />
 
     </FrameLayout>
 

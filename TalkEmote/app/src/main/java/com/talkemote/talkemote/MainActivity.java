@@ -6,6 +6,8 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -71,12 +73,15 @@ public class MainActivity extends Activity {
     private ByteArrayOutputStream recData;
     private JSONObject res;
 
-    private TextView txtSpeechInput;
+    private TextView txtSpeechInput, tabOnMicPrompt;
     private ImageButton btnSpeak;
+    private Typeface typeface;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
     int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +90,21 @@ public class MainActivity extends Activity {
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+        tabOnMicPrompt = (TextView) findViewById(R.id.tapOnMic);
 
         // Prepare AudioRecord
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/sample.wav";
         isRecording = false;
 
         loadingDialogHandler = new Handler();
+
+        AssetManager am = getApplicationContext().getAssets();
+
+        typeface = Typeface.createFromAsset(am,
+                String.format(Locale.US, "fonts/Source_Sans_Pro/%s", "SourceSansPro-ExtraLight.ttf"));
+
+        txtSpeechInput.setTypeface(typeface);
+        tabOnMicPrompt.setTypeface(typeface);
     }
 
     public void btnSpeak(View view) {
