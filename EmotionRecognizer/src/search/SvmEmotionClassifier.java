@@ -50,7 +50,8 @@ public class SvmEmotionClassifier {
 		int label = (int) value;
 		label--;
 		
-		String[] tags = EvaluationFacade.EMOTION_IEMOCAP_TAGS;
+		//String[] tags = EvaluationFacade.EMOTION_IEMOCAP_TAGS;
+		String[] tags = EvaluationFacade.EMOTION_TAGS;
 		if (label < 0) {
 			label = 0;
 		} else if (label > tags.length - 1) {

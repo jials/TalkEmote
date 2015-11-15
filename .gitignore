@@ -5,6 +5,10 @@ EmotionRecognizer/opensmile
 EmotionRecognizer/bin
 EmotionRecognizer/release
 
+*/test.arff
+*/out.arff
+*.arff
+
 # Android Studio
 TalkEmote/.gradle
 TalkEmote/local.properties

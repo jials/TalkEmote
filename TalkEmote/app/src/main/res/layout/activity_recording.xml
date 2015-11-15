@@ -22,7 +22,7 @@
             android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="normal"
-            android:id="@+id/textView"
+            android:id="@+id/tabOnMic"
             android:layout_alignTop="@+id/btnSpeak"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp" />
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/recording_splash_msg"
-        android:id="@+id/textView2"
+        android:id="@+id/recordingMessage"
         android:layout_gravity="center_horizontal"
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"

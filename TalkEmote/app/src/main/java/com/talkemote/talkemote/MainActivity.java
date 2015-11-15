@@ -6,6 +6,8 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -24,8 +26,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -34,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -59,13 +71,17 @@ public class MainActivity extends Activity {
     private Handler loadingDialogHandler;
 
     private ByteArrayOutputStream recData;
+    private JSONObject res;
 
-    private TextView txtSpeechInput;
+    private TextView txtSpeechInput, tabOnMicPrompt, txtRecording;
     private ImageButton btnSpeak;
+    private Typeface typeface;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
     int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,19 +89,22 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        tabOnMicPrompt = (TextView) findViewById(R.id.tapOnMic);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         // Prepare AudioRecord
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/sample.wav";
         isRecording = false;
 
-        loadingDialogHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                loadingDialog.dismiss();
-                changeView();
-            }
-        };
+        loadingDialogHandler = new Handler();
+
+        AssetManager am = getApplicationContext().getAssets();
+
+        typeface = Typeface.createFromAsset(am,
+                String.format(Locale.US, "fonts/Source_Sans_Pro/%s", "SourceSansPro-ExtraLight.ttf"));
+
+        txtSpeechInput.setTypeface(typeface);
+        tabOnMicPrompt.setTypeface(typeface);
     }
 
     public void btnSpeak(View view) {
@@ -95,19 +114,29 @@ public class MainActivity extends Activity {
             Thread analysingAudioThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO: Send the data to server
                     try {
-                        sendAudioFileToServer();
+                        sendAudioFileToServerAndResponse();
+                        final String msg = res.getString("message") + " --- feeling " + res.getString("emotion");
                         Thread.sleep(4000);
-                        loadingDialogHandler.sendEmptyMessage(0);
+                        loadingDialog.dismiss();
+                        loadingDialogHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateTextbox(msg);
+                            }
+                        });
                     } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }, "analysingAudio Thread");
             analysingAudioThread.start();
+            changeView();
         } else {
             startRecording();
+            isRecording = true;
             changeView();
         }
     }
@@ -210,7 +239,7 @@ public class MainActivity extends Activity {
         convertPcmToWav();
     }
 
-    private void sendAudioFileToServer() {
+    private void sendAudioFileToServerAndResponse() {
         String boundary = "*****";
         String lineEnd = "\r\n";
         String twoHyphens = "--";
@@ -268,31 +297,99 @@ public class MainActivity extends Activity {
                     + serverResponseMessage + ": " + serverResponseCode);
 
             if (serverResponseCode == 200) {
+                // http://stackoverflow.com/questions/6511880/how-to-parse-a-json-input-stream
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                // TODO: receive JSON from server
+                BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+                StringBuilder responseStrBuilder = new StringBuilder();
+
+                String inputStr;
+                while ((inputStr = br.readLine()) != null) {
+                    responseStrBuilder.append(inputStr);
+                }
+
+                res = new JSONObject(responseStrBuilder.toString());
+                Log.i("uploadFile", "message: " + res.getString("message") + " emotion: " + res.getString("emotion"));
+
             }
 
             fis.close();
             dos.flush();
             dos.close();
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
     }
 
     // Toggle between recording view and idle view
     // http://stackoverflow.com/questions/4446105/is-it-possible-to-do-transition-animations-when-changing-views-in-the-same-activ
     private void changeView() {
         LayoutInflater inflator = getLayoutInflater();
-        View view = inflator.inflate(isRecording?R.layout.activity_main:R.layout.activity_recording, null, false);
+        Log.i("isRecording", "isRecording: " + isRecording);
+        AssetManager am = getApplicationContext().getAssets();
+        View view = null;
+        if (isRecording) {
+            view = inflator.inflate(R.layout.activity_recording, null, false);
+            txtRecording = (TextView) view.findViewById(R.id.recordingMessage);
+            tabOnMicPrompt = (TextView) view.findViewById(R.id.tabOnMic);
+            typeface = Typeface.createFromAsset(am,
+                    String.format(Locale.US, "fonts/Source_Sans_Pro/%s", "SourceSansPro-ExtraLight.ttf"));
+            tabOnMicPrompt.setTypeface(typeface);
+            txtRecording.setTypeface(typeface);
+        } else {
+            view = inflator.inflate(R.layout.activity_main, null, false);
+            txtSpeechInput = (TextView) view.findViewById(R.id.txtSpeechInput);
+            tabOnMicPrompt = (TextView) view.findViewById(R.id.tapOnMic);
+            typeface = Typeface.createFromAsset(am,
+                    String.format(Locale.US, "fonts/Source_Sans_Pro/%s", "SourceSansPro-ExtraLight.ttf"));
+            txtSpeechInput.setTypeface(typeface);
+            tabOnMicPrompt.setTypeface(typeface);
+        }
+
         view.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
         setContentView(view);
+    }
+
+    // Update the textbox
+    private void updateTextbox(String msg) {
+        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        txtSpeechInput.setText(msg);
+    }
+
+    // Publish content inside textbox to Facebook
+    public void publishStatusUpdateToFacebook(View view) {
+        Toast.makeText(getApplicationContext(),
+                "Publishing to Facebook...", Toast.LENGTH_SHORT).show();
+        String msg = txtSpeechInput.getText().toString();
+        Bundle params = new Bundle();
+        params.putString("message", msg);
+        JSONObject privacy = new JSONObject();
+        try {
+            privacy.put("value", "SELF");
+        } catch (JSONException e) {
+
+            e.printStackTrace();
+        }
+        /* make the API call */
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me/feed",
+                params,
+                HttpMethod.POST,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                    /* handle the result */
+                        Log.i("Facebook GraphResponse", String.valueOf(response));
+                        Toast.makeText(getApplicationContext(),
+                                "Posted to Facebook successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ).executeAsync();
     }
 
     /**

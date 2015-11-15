@@ -101,7 +101,7 @@ public class SvmModelGenerator {
 		param.kernel_type = svm_parameter.LINEAR;
 		param.gamma = 1;
 		param.eps = 0.001;
-		param.cache_size = 500;
+		param.cache_size = 500000;
 		param.C = 1;
 		param.nu = 0.5;
 		param.shrinking = 1;
@@ -119,7 +119,8 @@ public class SvmModelGenerator {
 	}
 	
 	private int retrieveOutcome(String key) {
-		String[] tags = EvaluationFacade.EMOTION_IEMOCAP_TAGS;
+		//String[] tags = EvaluationFacade.EMOTION_IEMOCAP_TAGS;
+		String[] tags = EvaluationFacade.EMOTION_TAGS;
 		for (int i = 0; i < tags.length; i++) {
 			if (key.endsWith(tags[i] + EXT)) {
 				System.out.print(key + " ");

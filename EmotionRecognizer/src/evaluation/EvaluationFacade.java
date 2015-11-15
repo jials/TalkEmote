@@ -2,16 +2,11 @@ package evaluation;
 
 //audiobook
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Vector;
 
 import search.SearchDemo;
-import signal.WavObj;
-import signal.WaveIO;
-import training.AudioFeaturesGenerator;
 
 public class EvaluationFacade {
 
@@ -28,7 +23,7 @@ public class EvaluationFacade {
 		"happy",
 		"sad",
 		"frustration",
-		"angry",
+		"angry", 	
 		"neutral",
 		"disgust"
 	};
@@ -53,6 +48,7 @@ public class EvaluationFacade {
 		return emotions;
 	}
 	
+	/*
 	private Vector <String> retrieveEmotionFromWavFile(String wavFile) {
 		if (!wavFile.endsWith(AudioFeaturesGenerator.EXT_WAV)) {
 			return null;
@@ -62,7 +58,9 @@ public class EvaluationFacade {
 		
 		return readIemocapLabelFile(labelPath);
 	}
+	*/
 	
+	/*
 	private Vector <String> readIemocapLabelFile(String filename) {
 		Vector <String> lines = new Vector <String>();
 		try{
@@ -82,7 +80,9 @@ public class EvaluationFacade {
         }		
 		return lines;
 	}
-	
+	*/
+	/*
+	 * previous method, when we are not using opensmile library
 	public void evaluateIemocapEmotionClassification(File[] testFiles, SearchDemo search) {
 		int total = 0;
 		int correct = 0;
@@ -134,13 +134,38 @@ public class EvaluationFacade {
 		System.out.println(total);
 		System.out.println("result: " + accuracy * 100 + "%");
 	}
+	*/
 
 	public void evaluateEmotionClassification(File[] testFiles, SearchDemo search) {
+		File test = new File("test.arff");
+		if (test.exists()) {
+			if (!test.delete()) {
+				System.out.println("file not deleted");
+			}
+		}
+		
 		int total = testFiles.length;
 		int correct = 0;
+		Vector <String> emotions = new Vector<String>();
 		for (int i = 0; i < testFiles.length; i++) {
 			String testFile = testFiles[i].getAbsolutePath();
+			search.classifyEmotion(testFile);
+			emotions = search.getEmotions();
+			String fileName = testFiles[i].getName();
+
+			String emotion = emotions.get(i);
+			System.out.println(fileName + " " + emotion);
+			if (emotion.equals("pleasant surprise")) {
+				emotion = "ps";
+			}
+			
+			if (testFile.contains(emotion)) {
+				correct++;
+			}
+			
+			/*
 			String emotion = search.classifyEmotion(testFile);
+			
 			System.out.println(testFiles[i].getName() + " " + emotion);
 			if (emotion.equals("pleasant surprise")) {
 				emotion = "ps";
@@ -149,7 +174,11 @@ public class EvaluationFacade {
 			if (testFile.contains(emotion)) {
 				correct++;
 			}
+			*/
 		}
+		
+		System.out.println(emotions.size() + " " + testFiles.length);
+		
 		double accuracy = (double) correct / (double) total;
 		System.out.println("result: " + accuracy * 100 + "%");
 	}
