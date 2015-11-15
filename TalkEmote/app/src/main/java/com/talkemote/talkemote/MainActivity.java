@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
     private ByteArrayOutputStream recData;
     private JSONObject res;
 
-    private TextView txtSpeechInput, tabOnMicPrompt;
+    private TextView txtSpeechInput, tabOnMicPrompt, txtRecording;
     private ImageButton btnSpeak;
     private Typeface typeface;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -89,8 +89,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
-        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
         tabOnMicPrompt = (TextView) findViewById(R.id.tapOnMic);
+        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         // Prepare AudioRecord
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/sample.wav";
@@ -331,7 +331,26 @@ public class MainActivity extends Activity {
     private void changeView() {
         LayoutInflater inflator = getLayoutInflater();
         Log.i("isRecording", "isRecording: " + isRecording);
-        View view = inflator.inflate(isRecording?R.layout.activity_recording:R.layout.activity_main, null, false);
+        AssetManager am = getApplicationContext().getAssets();
+        View view = null;
+        if (isRecording) {
+            view = inflator.inflate(R.layout.activity_recording, null, false);
+            txtRecording = (TextView) view.findViewById(R.id.recordingMessage);
+            tabOnMicPrompt = (TextView) view.findViewById(R.id.tabOnMic);
+            typeface = Typeface.createFromAsset(am,
+                    String.format(Locale.US, "fonts/Source_Sans_Pro/%s", "SourceSansPro-ExtraLight.ttf"));
+            tabOnMicPrompt.setTypeface(typeface);
+            txtRecording.setTypeface(typeface);
+        } else {
+            view = inflator.inflate(R.layout.activity_main, null, false);
+            txtSpeechInput = (TextView) view.findViewById(R.id.txtSpeechInput);
+            tabOnMicPrompt = (TextView) view.findViewById(R.id.tapOnMic);
+            typeface = Typeface.createFromAsset(am,
+                    String.format(Locale.US, "fonts/Source_Sans_Pro/%s", "SourceSansPro-ExtraLight.ttf"));
+            txtSpeechInput.setTypeface(typeface);
+            tabOnMicPrompt.setTypeface(typeface);
+        }
+
         view.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right));
         setContentView(view);
     }
