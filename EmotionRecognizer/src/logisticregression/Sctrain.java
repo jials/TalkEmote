@@ -101,7 +101,7 @@ public class Sctrain {
 		initializeOutcomeVector(numOfDataSets);
 		
 		for (int i = 0; i < numOfDataSets; i++) {
-			if (_datasets.get(i).get(0).equals(_emotion)) {
+			if (_datasets.get(i).get(0).endsWith(_emotion + ".wav")) {
 				_outcome[i] = 1;
 			} else {
 				_outcome[i] = 0;

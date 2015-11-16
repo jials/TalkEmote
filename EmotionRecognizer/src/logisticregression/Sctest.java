@@ -94,6 +94,17 @@ public class Sctest {
 	}
 	
 	public boolean isEmotion(double[] featureVector) {
+		double probability = getProbabilityOfEmotion(featureVector);
+		
+		//System.out.println(probability);
+		return probability >= 0.5;
+	}
+
+	/**
+	 * @param featureVector
+	 * @return
+	 */
+	public double getProbabilityOfEmotion(double[] featureVector) {
 		if (featureVector.length != _weightVectors.length) {
 			System.out.println("featureVector does not have the same dimention with weight vector");
 			System.exit(-1);
@@ -107,9 +118,7 @@ public class Sctest {
 		probability = Math.pow(Math.E, probability);
 		probability++;
 		probability = 1 / probability;
-		
-		//System.out.println(probability);
-		return probability >= 0.5;
+		return probability;
 	}
     
 	private double[] computeFeatureVector(String[] words) {
