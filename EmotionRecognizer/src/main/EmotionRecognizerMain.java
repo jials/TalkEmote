@@ -38,11 +38,8 @@ public class EmotionRecognizerMain {
 	 */
 	private static String getEmotionString(SearchDemo search, File emotionFile) {
 		String emotion = search.classifyEmotion(emotionFile.getAbsolutePath());
-		//System.out.println(emotion);
 		StringBuffer emotionBuffer = new StringBuffer();
-		
-		HashMap<String, String> emotionMap = getEmotionMap();
-		
+				
 		try {
 			Process process = Runtime.getRuntime().exec("python " + PYTHON_SPEECH_RECOGNITION_SENTIMENT);
 			InputStream is = process.getInputStream();
@@ -54,10 +51,11 @@ public class EmotionRecognizerMain {
 			while ((line = br.readLine()) != null) {
 				if (linenum == 0) {
 					if (line.equals("Google Speech Recognition could not understand audio")) {
+						
 						emotionBuffer.append("message:|");
 						emotionBuffer.append("emotion:" + emotion);
 						return emotionBuffer.toString();
-					} else {
+					} else {						
 						char front = line.charAt(0);
 						char frontCap = Character.toUpperCase(front);
 						line = line.replaceFirst(front + "", frontCap + "");
@@ -66,11 +64,15 @@ public class EmotionRecognizerMain {
 				} else if (linenum == 1) {
 					line = line.trim();
 					
-					if (emotionMap.get(emotion).equals(line)) {
-						emotionBuffer.append("emotion:" + emotion);
-					} else {
-						emotionBuffer.append("emotion:different");
+					if (line.equals("pos") && emotion.equals("neutral")) {
+						emotion = "happy";
+					} else if (emotion.equals("other")) {
+						emotion = "different";
+					} else if (line.equals("neg") && emotion.equals("neutral")) {
+						emotion = "frustration";
 					}
+					emotionBuffer.append("emotion:" + emotion);
+
 					
 				} else {
 					//do nothing

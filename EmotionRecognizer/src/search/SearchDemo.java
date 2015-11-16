@@ -3,14 +3,11 @@ package search;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
+import logisticregression.SurroundingWordsGenerator;
 import signal.WaveIO;
 import tool.SortHashMapByValue;
-import training.WekaClassifier;
 import distance.Bhattacharyya;
 import distance.Chebychev;
 import distance.CityBlock;
@@ -37,6 +34,9 @@ public class SearchDemo {
 	private static final double SCORE_MS_BHAT = (0.6422330097087378 + 0.6197571985281075) * 100 / 2;
 	private static final double SCORE_ZCR_CITYBLOCK = (0.2082524271844662 + 0.08922754147898056) * 100 / 2;
 
+	private SurroundingWordsGenerator _gen = null;
+
+	
 	/*
 	 * private static final double SCORE_MFCC_BHAT = (0.15922330097087398 +
 	 * 0.07504099469168307) * 100 / 2; private static final double
@@ -86,7 +86,9 @@ public class SearchDemo {
 	private HashMap<String, double[]> _emotionZeroCrossing = null;
 
 	public SearchDemo() {
-
+		_gen = new SurroundingWordsGenerator();
+		_gen.readSurroundingWordFile();
+		_gen.readTranscripts();
 	}
 
 	/***
@@ -873,72 +875,120 @@ public class SearchDemo {
 		return fList;
 	}
 
-	public String classifyEmotion(String query) {
-    	try {
-
-    		
-    		File file = new File(query);
-			Process classification = Runtime.getRuntime().exec("\"opensmile\\SMILExtract_Release.exe\" -C "
-					+ "\"config\\IS09_emotion.conf\" -I "
-					+ "\"" + file.getAbsolutePath() + "\" -instname \"" + file.getName() + "\" "
-				    + "-O \"..\\test.arff\"", null, new File("opensmile/"));
-			
-			InputStream is = classification.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			String line;
-			
-			while ((line = br.readLine()) != null) {
-				System.out.println(line);
-			}
-
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	return null;
-    }
-	
-	public Vector<String> getEmotions() {
-		WekaClassifier weka = new WekaClassifier();
-		Vector<String> featureLine = weka.getFeatures("test.arff");
-		
-		Vector <String> emotions = new Vector<String>();
-		
-		for (int i = 0; i < featureLine.size(); i++) {
-			String[] featureTokens = featureLine.get(i).split(" ");
-			double[] features = new double[featureTokens.length - 1];
-			for (int j = 0; j < features.length; j++) {
-				features[i] = Double.parseDouble(featureTokens[i + 1]);
-			}
-			SvmEmotionClassifier classifier = search.SvmEmotionClassifier.getObject(); 
-			String emotion = classifier.classifyEmotion(features);
-			emotions.add(emotion);
-		}
-		return emotions; 
-	}
+	/*
+	 * These are the methds used to integrate with opensmile toolkit public
+	 * String classifyEmotion(String query) { try {
+	 * 
+	 * 
+	 * File file = new File(query); Process classification =
+	 * Runtime.getRuntime().exec("\"opensmile\\SMILExtract_Release.exe\" -C " +
+	 * "\"config\\IS09_emotion.conf\" -I " + "\"" + file.getAbsolutePath() +
+	 * "\" -instname \"" + file.getName() + "\" " + "-O \"..\\test.arff\"",
+	 * null, new File("opensmile/"));
+	 * 
+	 * InputStream is = classification.getInputStream(); InputStreamReader isr =
+	 * new InputStreamReader(is); BufferedReader br = new BufferedReader(isr);
+	 * String line;
+	 * 
+	 * while ((line = br.readLine()) != null) { System.out.println(line); }
+	 * 
+	 * 
+	 * } catch (IOException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } return null; }
+	 * 
+	 * public Vector<String> getEmotions() { WekaClassifier weka = new
+	 * WekaClassifier(); Vector<String> featureLine =
+	 * weka.getFeatures("test.arff");
+	 * 
+	 * Vector <String> emotions = new Vector<String>();
+	 * 
+	 * for (int i = 0; i < featureLine.size(); i++) { String[] featureTokens =
+	 * featureLine.get(i).split(" "); double[] features = new
+	 * double[featureTokens.length - 1]; for (int j = 0; j < features.length;
+	 * j++) { features[i] = Double.parseDouble(featureTokens[i + 1]); }
+	 * SvmEmotionClassifier classifier =
+	 * search.SvmEmotionClassifier.getObject(); String emotion =
+	 * classifier.classifyEmotion(features); emotions.add(emotion); } return
+	 * emotions; }
+	 */
 
 	// these are previous methods when we are using our own MFCC feature to
 	// calculate
-	/*
-	 * public String classifyEmotion(String query) { WaveIO waveIO = new
-	 * WaveIO();
-	 * 
-	 * short[] inputSignal = waveIO.readWave(query); return
-	 * classifyEmotion(inputSignal); }
-	 */
+
+	public String classifyEmotion(String query) {
+		WaveIO waveIO = new WaveIO();
+
+		short[] inputSignal = waveIO.readWave(query);
+		return classifyEmotion(inputSignal);
+	}
+	
+	public String classifyEmotion(String query, String line) {
+		WaveIO waveIO = new WaveIO();
+
+		short[] inputSignal = waveIO.readWave(query);
+		return classifyEmotion(inputSignal, line);
+	}
+	
+	public String classifyEmotion(String query, File file) {
+		WaveIO waveIO = new WaveIO();
+
+		short[] inputSignal = waveIO.readWave(query);
+		return classifyEmotion(inputSignal, file);
+	}
+
 	/**
 	 * @param inputSignal
 	 * @return
 	 */
-	/*
-	 * 
-	 * public String classifyEmotion(short[] inputSignal) { MFCC ms = new
-	 * MFCC(); ms.process(inputSignal); double[] msFeature1 =
-	 * ms.getMeanFeature(); SvmEmotionClassifier classifier =
-	 * search.SvmEmotionClassifier.getObject(); String emotion =
-	 * classifier.classifyEmotion(msFeature1); return emotion; }
+
+	public String classifyEmotion(short[] inputSignal) {
+		MFCC ms = new MFCC();
+		ms.process(inputSignal);
+		double[] msFeature1 = ms.getMeanFeature();
+		SvmEmotionClassifier classifier = search.SvmEmotionClassifier
+				.getObject();
+		String emotion = classifier.classifyEmotion(msFeature1);
+		return emotion;
+	}
+	
+	public String classifyEmotion(short[] inputSignal, File file) {
+		MFCC ms = new MFCC();
+		ms.process(inputSignal);
+		double[] msFeature1 = ms.getMeanFeature();
+		double[] ling = _gen.getFeatureVector(file);
+		double[] features = fuseFeatures(msFeature1, ling);
+		SvmEmotionClassifier classifier = search.SvmEmotionClassifier
+				.getObject();
+		String emotion = classifier.classifyEmotion(features);
+		return emotion;
+	}
+	
+	public String classifyEmotion(short[] inputSignal, String line) {
+		MFCC ms = new MFCC();
+		ms.process(inputSignal);
+		double[] msFeature1 = ms.getMeanFeature();
+		double[] ling = _gen.getFeatureVector(line);
+		double[] features = fuseFeatures(msFeature1, ling);
+		SvmEmotionClassifier classifier = search.SvmEmotionClassifier
+				.getObject();
+		String emotion = classifier.classifyEmotion(features);
+		return emotion;
+	}
+	
+	/**
+	 * @param mean
+	 * @param ling
+	 * @return
 	 */
+	public double[] fuseFeatures(double[] mean, double[] ling) {
+		double[] features = new double[mean.length + ling.length];
+		for (int j = 0; j < mean.length; j++) {
+			features[j] = mean[j];
+		}
+		for (int j = 0; j < ling.length; j++) {
+			features[j + mean.length] = ling[j];
+		}
+		return features;
+	}
 
 }

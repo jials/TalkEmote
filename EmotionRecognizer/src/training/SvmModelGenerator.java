@@ -14,6 +14,7 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import logisticregression.LogisticFuse;
 
 public class SvmModelGenerator {
 	public static class IntegerSvmNode {
@@ -53,6 +54,7 @@ public class SvmModelGenerator {
 	private svm_problem retrieveSvmProblemFromFiles() {
 		svm_problem prob = new svm_problem();
 		HashMap <String, double[]> emotionMfcc = readFeature(AudioFeaturesGenerator.EMOTION_IEMOCAP_MFCC);
+		//HashMap <String, double[]> emotionMfcc = readFeature(LogisticFuse.EMOTION_IEMOCAP_MFCC);
 		
 		int size = emotionMfcc.size();
 		
@@ -119,8 +121,8 @@ public class SvmModelGenerator {
 	}
 	
 	private int retrieveOutcome(String key) {
-		//String[] tags = EvaluationFacade.EMOTION_IEMOCAP_TAGS;
-		String[] tags = EvaluationFacade.EMOTION_TAGS;
+		String[] tags = EvaluationFacade.EMOTION_IEMOCAP_TAGS;
+		//String[] tags = EvaluationFacade.EMOTION_TAGS;
 		for (int i = 0; i < tags.length; i++) {
 			if (key.endsWith(tags[i] + EXT)) {
 				System.out.print(key + " ");

@@ -1,6 +1,9 @@
 <?php
 namespace server;
 
+set_time_limit(0);
+
+
 $rootFile = $_SERVER['DOCUMENT_ROOT'];
 
 require_once ($rootFile . '/server/initial.php');
@@ -39,6 +42,8 @@ $response = $curFile->saveToDirectory();
 #echo (json_encode($response));
 
 $response = exec("java -jar EmotionRecognizer-V0.1.jar");
+#echo $response;
+
 $responseArray = explode("|", $response);
 $responseArrays[0] = explode(":", $responseArray[0]);
 $responseArrays[1] = explode(":", $responseArray[1]);

@@ -137,23 +137,26 @@ public class EvaluationFacade {
 	*/
 
 	public void evaluateEmotionClassification(File[] testFiles, SearchDemo search) {
+		/*
 		File test = new File("test.arff");
 		if (test.exists()) {
 			if (!test.delete()) {
 				System.out.println("file not deleted");
 			}
 		}
+		*/
 		
 		int total = testFiles.length;
 		int correct = 0;
 		Vector <String> emotions = new Vector<String>();
 		for (int i = 0; i < testFiles.length; i++) {
 			String testFile = testFiles[i].getAbsolutePath();
-			search.classifyEmotion(testFile);
-			emotions = search.getEmotions();
 			String fileName = testFiles[i].getName();
+			String emotion = search.classifyEmotion(testFile, testFiles[i]);
+			
+			//emotions = search.getEmotions();
 
-			String emotion = emotions.get(i);
+			//String emotion = emotions.get(i);
 			System.out.println(fileName + " " + emotion);
 			if (emotion.equals("pleasant surprise")) {
 				emotion = "ps";

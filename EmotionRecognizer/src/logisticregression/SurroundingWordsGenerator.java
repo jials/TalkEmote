@@ -35,16 +35,28 @@ public class SurroundingWordsGenerator {
 	}
 	
 	public double[] getFeatureVector(File file) {
-		double[] featureVector = new double[_surroundingWords.size()];
-		Arrays.fill(featureVector, 0);
-
-		
 		String name = file.getName();
 		int lastIndex = name.lastIndexOf("_");
 		name = name.substring(0, lastIndex);
 		
 		String line = _transcripts.get(name);
+		
+		return getFeatureVector(line);
+	}
+
+	/**
+	 * @param line
+	 * @return
+	 */
+	public double[] getFeatureVector(String line) {
+		double[] featureVector = new double[_surroundingWords.size()];
+		Arrays.fill(featureVector, 0);
 		if (line == null) {
+			return featureVector;
+		}
+		
+		line = line.trim();
+		if (line.isEmpty()) {
 			return featureVector;
 		}
 		

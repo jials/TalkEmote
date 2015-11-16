@@ -99,6 +99,55 @@ public class LogisticFuse {
 		double correct = 0;
 		
 		for (int i = 0; i < testFiles.length; i++) {
+			if (i % 100 == 0) {
+				System.out.println(i);
+			}
+			
+			String audioPath = testFiles[i].getAbsolutePath();
+			Vector <String> emotions = classifyEmotion(audioPath);
+			
+			String emotion = "others";
+			if (!emotions.isEmpty()) {
+				for (int j = 0; j < emotions.size(); j++) {
+					emotion = emotions.get(j);
+					if (audioPath.endsWith(emotion + ".wav")) {
+						correct += 1.0 / (double)(j+1);
+						break;
+					}
+				}
+			} else {
+				if (audioPath.endsWith(emotion + ".wav")) {
+					correct += 1.0;
+				}
+			}
+			//System.out.println(testFiles[i].getName() + " " + emotion);
+			
+		}
+		double accuracy = correct / (double) total;
+		System.out.println(accuracy * 100 + "%");
+	}
+	
+	public void easyCrossValidationWithoutFeature(String datapath, String trainfile) {
+		File dir = new File(datapath);
+		easyCrossValidation(dir, trainfile);
+	}
+	
+	public void easyCrossValidationWithoutFeature(File datapath, String trainfile) {
+		File[] files = datapath.listFiles();
+		int numOfTestFiles = files.length / 10;
+		//File[] trainFiles = Arrays.copyOfRange(files, 0, files.length - numOfTestFiles);
+		File[] testFiles = Arrays.copyOfRange(files, files.length - numOfTestFiles, files.length);
+		
+		trainClassifier();
+		
+		int total = testFiles.length;
+		double correct = 0;
+		
+		for (int i = 0; i < testFiles.length; i++) {
+			if (i % 100 == 0) {
+				System.out.println(i);
+			}
+			
 			String audioPath = testFiles[i].getAbsolutePath();
 			Vector <String> emotions = classifyEmotion(audioPath);
 			
@@ -144,6 +193,7 @@ public class LogisticFuse {
 		System.out.println("test");
 
 		for (int i = 0; i < testFiles.length; i++) {
+			
 			String audioPath = testFiles[i].getAbsolutePath();
 			Vector <String> emotions = classifyEmotionEarlyFuse(audioPath);
 			
@@ -161,7 +211,7 @@ public class LogisticFuse {
 					correct += 1.0;
 				}
 			}
-			//System.out.println(testFiles[i].getName() + " " + emotion);
+			System.out.println(testFiles[i].getName() + " " + emotion);
 			
 		}
 		double accuracy = correct / (double) total;
@@ -467,7 +517,7 @@ public class LogisticFuse {
 	
 	public static void main (String[] args) {
 		//IEMOCAP
-		System.out.println("IEMOCAP:");
+		//System.out.println("IEMOCAP:");
 		LogisticFuse iemocap = new LogisticFuse(EMOTION_IEMOCAP_TAGS);
 		//iemocap.easyCrossValidation(FILEPATH_IEMOCAP_SEGMENT, EMOTION_IEMOCAP_MFCC);
 		iemocap.easyCrossValidationEarlyFuse(FILEPATH_IEMOCAP_SEGMENT, EMOTION_IEMOCAP_MFCC);
