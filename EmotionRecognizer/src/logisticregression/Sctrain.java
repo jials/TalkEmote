@@ -45,15 +45,23 @@ public class Sctrain {
 	}
 
 	private boolean retrieveDataSet(String trainFile) {
+		String[] lineTokens = null;
+		Vector<String> vector = new Vector<String>();
 		try {
 			File file = new File(trainFile);
 		    BufferedReader br = new BufferedReader(new FileReader(file));
 		    for(String line; (line = br.readLine()) != null; ) {
 		        // process the line.
+		    	line = line.trim();
+		    	if (line.isEmpty()) {
+		    		continue;
+		    	}
+		    	
 		        line = line.replaceAll("\\s", " ");
-		        String[] lineTokens = line.split(" ");      
 		        
-		        Vector<String> vector = new Vector<String>();
+		        lineTokens = line.split(" ");      
+		        
+		        vector.clear();
                 for (int i = 0; i < lineTokens.length; i++) {
                     lineTokens[i] = lineTokens[i].toLowerCase().trim();
                     if (!lineTokens[i].isEmpty()) {
@@ -161,10 +169,10 @@ public class Sctrain {
 		int dataSetSize = _datasets.size();
 		int indexOfDataSet = 0;
 		while (true) {
-            if (indexOfDataSet % 100 == 0) {
-                System.out.println(indexOfDataSet);
-            }
-
+			if (indexOfDataSet % 100 == 0) {
+				System.out.println(indexOfDataSet);
+			}
+            
 			boolean isEnded = true;
 
 			double[] gradients = new double[n];

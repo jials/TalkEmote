@@ -100,6 +100,16 @@ public class Sctest {
 		return probability >= 0.5;
 	}
 
+	public static double[] addInterception(double[] featureVector) {
+		double[] newFeatureVector = new double[featureVector.length + 1];
+		newFeatureVector[0] = 1;
+		
+		for (int i = 0; i < featureVector.length; i++) {
+			newFeatureVector[i + 1] = featureVector[i];
+		}
+		return newFeatureVector;
+	}
+	
 	/**
 	 * @param featureVector
 	 * @return

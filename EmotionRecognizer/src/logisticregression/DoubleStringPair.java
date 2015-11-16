@@ -7,7 +7,7 @@ public class DoubleStringPair {
 
 		@Override
 		public int compare(DoubleStringPair o1, DoubleStringPair o2) {
-			if (o2.getFirst() - o1.getFirst() > 0) {
+			if (o2.getFirst() - o1.getFirst() < 0) {
 				return -1;
 			} 
 

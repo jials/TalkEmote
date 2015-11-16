@@ -17,6 +17,8 @@ public class LogisticMulticlassClassifier {
 	
 	public Vector <String> classifyEmotion(double[] featureVector) {
 		Vector<DoubleStringPair> emotionObjects = new Vector<DoubleStringPair>();
+		featureVector = Sctest.addInterception(featureVector);
+		
 		emotionObjects = new Vector<DoubleStringPair>();
 		for (int i = 0; i < _classifiers.length; i++) {
 			String emotion = _classifiers[i].getEmotion();
@@ -31,7 +33,7 @@ public class LogisticMulticlassClassifier {
 		
 		Vector <String> emotions = new Vector<String>();
 		for (int i = 0; i < emotionObjects.size(); i++) {
-			System.out.println(emotionObjects.get(i).getFirst());
+			//System.out.println(emotionObjects.get(i).getFirst());
 			emotions.add(emotionObjects.get(i).getSecond());
 		}
 		return emotions;

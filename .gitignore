@@ -4,6 +4,8 @@ EmotionRecognizer/lib
 EmotionRecognizer/opensmile
 EmotionRecognizer/bin
 EmotionRecognizer/release
+EmotionRecognizer/*.txt
+EmotionRecognizer/*.model
 
 */test.arff
 */out.arff

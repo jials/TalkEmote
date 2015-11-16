@@ -29,6 +29,9 @@ public class AudioFeaturesGenerator {
 	public static final String FILEPATH_AUDIO_IEMOCAP_SEGMENT = "data/input/IEMOCAP_segment/";
 	public static final String FILEPATH_AUDIO_IEMOCAP_TRAIN = "data/input/IEMOCAP_database";
 	public static final String FILEPATH_AUDIO_IEMOCAP_LABEL = "data/input/IEMOCAP_label/";
+	public static final String FILEPATH_AUDIO_IEMOCAP_SEGMENT_TRANS = "data/input/IEMOCAP_segment_transcriptions/";
+
+
 	public static final String EMOTION_IEMOCAP_MFCC = FILEPATH_FEATURE_OUT + "/emotion_iemocap_mfcc.txt";
 
 	private Vector <String> retrieveEmotionFromWavFile(String wavFile) {
@@ -86,7 +89,9 @@ public class AudioFeaturesGenerator {
 				double endTime = Double.parseDouble(timeTokens[1].trim());
 				
 				String nameAndEmotion = tokens[1].trim();
-				String emotion = nameAndEmotion.split(" ")[1].trim();
+				String[] nameAndEmotionTokens = nameAndEmotion.split(" ");
+				String name = nameAndEmotionTokens[0].trim();
+				String emotion = nameAndEmotionTokens[1].trim();
 								
 				short[] signal = obj.getSignalWithoutFirstFewSeconds(startTime);
 				signal = obj.getSignalWithFirstFewSeconds(endTime - startTime, signal);
@@ -96,8 +101,7 @@ public class AudioFeaturesGenerator {
 					continue;
 				}
 				
-				String displayName = audioFileName.replace(AudioFeaturesGenerator.EXT_WAV, 
-						"__" + j + "_" + emotions.get(emotion) + AudioFeaturesGenerator.EXT_WAV);
+				String displayName = name + "_" + emotions.get(emotion) + AudioFeaturesGenerator.EXT_WAV;
 				waveio.writeWave(signal, FILEPATH_AUDIO_IEMOCAP_SEGMENT + displayName);
 
 				
