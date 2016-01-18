@@ -25,9 +25,7 @@ public class GrundtruthFileGenerator {
 	}
 	
 	private boolean writeToFile(String filename, boolean isAppend, String line) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename, isAppend);
+		try (FileWriter fw = new FileWriter(filename, isAppend)) {
 			fw.write(line);
 			fw.close();
 		} catch (IOException e) {
@@ -122,6 +120,7 @@ public class GrundtruthFileGenerator {
 		return grundtruthName;
 	}
 	
+	@SuppressWarnings("resource")
 	public Vector <String> readEmotion(String filename) {
 		Vector <String> emotions = new Vector <String>();
 		try{

@@ -43,6 +43,7 @@ public class Sctest {
 		writeToFile(answerFile, false, "");
 	}
 
+	@SuppressWarnings("resource")
 	public boolean startClassifying() {
 		try {
 			File file = new File(_testFile);
@@ -80,9 +81,7 @@ public class Sctest {
 	}
 	
 	private boolean writeToFile(String filename, boolean isAppend, String line) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename, isAppend);
+		try (FileWriter fw = new FileWriter(filename, isAppend)) {
 			fw.write(line);
 			fw.close();
 		} catch (IOException e) {
@@ -159,6 +158,7 @@ public class Sctest {
         }
     }
 
+	@SuppressWarnings("resource")
 	private void retrieveDataFromModelFile(String fileName) {
 		try {
 			File file = new File(fileName);

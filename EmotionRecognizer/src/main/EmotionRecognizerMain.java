@@ -36,6 +36,7 @@ public class EmotionRecognizerMain {
 	 * @param search
 	 * @param emotionFile
 	 */
+	@SuppressWarnings("resource")
 	private static String getEmotionString(SearchDemo search, File emotionFile) {
 		String emotion = search.classifyEmotion(emotionFile.getAbsolutePath());
 		StringBuffer emotionBuffer = new StringBuffer();
@@ -54,13 +55,13 @@ public class EmotionRecognizerMain {
 						
 						emotionBuffer.append("message:|");
 						emotionBuffer.append("emotion:" + emotion);
+						br.close();
 						return emotionBuffer.toString();
-					} else {						
-						char front = line.charAt(0);
-						char frontCap = Character.toUpperCase(front);
-						line = line.replaceFirst(front + "", frontCap + "");
-						emotionBuffer.append("message:" + line  + "|");
 					}
+					char front = line.charAt(0);
+					char frontCap = Character.toUpperCase(front);
+					line = line.replaceFirst(front + "", frontCap + "");
+					emotionBuffer.append("message:" + line  + "|");
 				} else if (linenum == 1) {
 					line = line.trim();
 					

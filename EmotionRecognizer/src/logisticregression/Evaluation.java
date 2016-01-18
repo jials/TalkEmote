@@ -9,9 +9,8 @@ import java.util.Vector;
 public class Evaluation {
 	public Vector <String> retrieveDataFromFile(String fileName) {
 		Vector <String>  data = new Vector<String>();
-		try {
-			File file = new File(fileName);
-		    BufferedReader br = new BufferedReader(new FileReader(file));
+		File file = new File(fileName);
+		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 		    for(String line; (line = br.readLine()) != null; ) {
 		        line = line.replaceAll("\\s", " ");
 		        data.add(line);

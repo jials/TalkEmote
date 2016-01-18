@@ -89,10 +89,8 @@ public class WaveIO {
     
     public WavObj constructWavObj(String path) {
         File fileRead = new File(path);
-        AudioInputStream audioInputStream;
         WavObj wavObj = null;
-		try {
-			audioInputStream = AudioSystem.getAudioInputStream(fileRead);
+		try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(fileRead)) {
 			AudioFormat format = audioInputStream.getFormat();
 		    long audioFileLength = fileRead.length();
 		    short[] signal = readWave(fileRead);
@@ -147,7 +145,7 @@ public class WaveIO {
          */
         int numByteRead;
 
-        try {
+        try (AudioInputStream readAudioInputStream = AudioSystem.getAudioInputStream(fileRead)){
             /**
              * Byte array that used to store data read from the wave file
              */
@@ -156,7 +154,6 @@ public class WaveIO {
             /**
              * open the wave file
              */
-            AudioInputStream readAudioInputStream = AudioSystem.getAudioInputStream(fileRead);
             FORMAT = readAudioInputStream.getFormat();
             
             while ((numByteRead = readAudioInputStream.read(waveByte, 0, waveByte.length)) != -1){
@@ -175,6 +172,7 @@ public class WaveIO {
             for (int c = 0 ; c < waveShort.length ; c++){
                 waveShort[c] = (short)((tempWaveByte[2 * c + 1] << 8) + (tempWaveByte[2 * c] >= 0 ? tempWaveByte[2 * c] : tempWaveByte[2 * c] + 256));
             }
+            readAudioInputStream.close();
             return waveShort;
         }
         catch (Exception e){

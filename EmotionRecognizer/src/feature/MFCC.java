@@ -166,16 +166,16 @@ public class MFCC{
      *
      * @return array of FFT bin indices
      */
-    public int[] fftBinIndices(double samplingRate,int frameSize){
+    public int[] fftBinIndices(double samplingRate1,int frameSize){
         int cbin[] = new int[numMelFilters + 2];
 
-        cbin[0] = (int)Math.round(lowerFilterFreq / samplingRate * frameSize);
-        cbin[cbin.length - 1] = (int)(frameSize / 2);
+        cbin[0] = (int)Math.round(lowerFilterFreq / samplingRate1 * frameSize);
+        cbin[cbin.length - 1] = frameSize / 2;
 
         for (int i = 1; i <= numMelFilters; i++){
-            double fc = centerFreq(i,samplingRate);
+            double fc = centerFreq(i,samplingRate1);
 
-            cbin[i] = (int)Math.round(fc / samplingRate * frameSize);
+            cbin[i] = (int)Math.round(fc / samplingRate1 * frameSize);
         }
 
         return cbin;
@@ -264,10 +264,10 @@ public class MFCC{
      * @param i Index of mel filters
      * @return Center Frequency
      */
-    private double centerFreq(int i,double samplingRate){
+    private double centerFreq(int i,double samplingRate1){
         double mel[] = new double[2];
         mel[0] = freqToMel(lowerFilterFreq);
-        mel[1] = freqToMel(samplingRate / 2);
+        mel[1] = freqToMel(samplingRate1 / 2);
 
         // take inverse mel of:
         double temp = mel[0] + ((mel[1] - mel[0]) / (numMelFilters + 1)) * i;

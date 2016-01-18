@@ -269,7 +269,7 @@ public class Stats {
 	 */
 	public static int ensureIsPowerOfN(int x, int n)
 	{
-		double log_value = logBaseN((double) x, (double) n);
+		double log_value = logBaseN(x, n);
 		int log_int = (int) log_value;
 		int valid_size = (int) Math.pow(n, log_int);
 		if (valid_size != x)
@@ -279,12 +279,12 @@ public class Stats {
 	
 	public static boolean isPowerOf(int x, int n)
 	{
-		double log_value = logBaseN((double) x, (double) n);
+		double log_value = logBaseN(x, n);
 		int log_int = (int) log_value;
 		if (log_int == log_value){
 			return true;
-		}else
-			return false;
+		}
+		return false;
 	}
 
 }

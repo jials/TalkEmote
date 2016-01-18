@@ -44,6 +44,7 @@ public class Sctrain {
 		_modelFile = modelFile;
 	}
 
+	@SuppressWarnings("resource")
 	private boolean retrieveDataSet(String trainFile) {
 		String[] lineTokens = null;
 		Vector<String> vector = new Vector<String>();
@@ -148,6 +149,7 @@ public class Sctrain {
         return innerProductOfWeightAndFeature;
     }
     
+	@SuppressWarnings("unused")
 	private double derivativeFunction(int indexOfDataSet, int indexOfFeature, 
 			                          double[] weightVector, double innerProductOfWeightAndFeature) {
 		/**
@@ -247,9 +249,7 @@ public class Sctrain {
 	}
 	
 	private boolean saveFeaturesAndWeights(double[] weightVector, String filename) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename);
+		try (FileWriter fw = new FileWriter(filename)) {
 			for (int i = 0; i < weightVector.length; i++) {
 				fw.write(weightVector[i] + " ");
 			}

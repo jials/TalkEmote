@@ -111,7 +111,7 @@ public class LogisticFuse {
 				for (int j = 0; j < emotions.size(); j++) {
 					emotion = emotions.get(j);
 					if (audioPath.endsWith(emotion + ".wav")) {
-						correct += 1.0 / (double)(j+1);
+						correct += 1.0 / (j+1);
 						break;
 					}
 				}
@@ -123,7 +123,7 @@ public class LogisticFuse {
 			//System.out.println(testFiles[i].getName() + " " + emotion);
 			
 		}
-		double accuracy = correct / (double) total;
+		double accuracy = correct / total;
 		System.out.println(accuracy * 100 + "%");
 	}
 	
@@ -132,7 +132,7 @@ public class LogisticFuse {
 		easyCrossValidation(dir, trainfile);
 	}
 	
-	public void easyCrossValidationWithoutFeature(File datapath, String trainfile) {
+	public void easyCrossValidationWithoutFeature(File datapath) {
 		File[] files = datapath.listFiles();
 		int numOfTestFiles = files.length / 10;
 		//File[] trainFiles = Arrays.copyOfRange(files, 0, files.length - numOfTestFiles);
@@ -156,7 +156,7 @@ public class LogisticFuse {
 				for (int j = 0; j < emotions.size(); j++) {
 					emotion = emotions.get(j);
 					if (audioPath.endsWith(emotion + ".wav")) {
-						correct += 1.0 / (double)(j+1);
+						correct += 1.0 / (j+1);
 						break;
 					}
 				}
@@ -168,7 +168,7 @@ public class LogisticFuse {
 			//System.out.println(testFiles[i].getName() + " " + emotion);
 			
 		}
-		double accuracy = correct / (double) total;
+		double accuracy = correct / total;
 		System.out.println(accuracy * 100 + "%");
 	}
 	
@@ -202,7 +202,7 @@ public class LogisticFuse {
 				for (int j = 0; j < emotions.size(); j++) {
 					emotion = emotions.get(j);
 					if (audioPath.endsWith(emotion + ".wav")) {
-						correct += 1.0 / (double)(j+1);
+						correct += 1.0 / (j+1);
 						break;
 					}
 				}
@@ -214,7 +214,7 @@ public class LogisticFuse {
 			System.out.println(testFiles[i].getName() + " " + emotion);
 			
 		}
-		double accuracy = correct / (double) total;
+		double accuracy = correct / total;
 		System.out.println(accuracy * 100 + "%");
 	}
 	
@@ -238,7 +238,7 @@ public class LogisticFuse {
 				for (int j = 0; j < emotions.size(); j++) {
 					emotion = emotions.get(j);
 					if (audioPath.endsWith(emotion + ".wav")) {
-						correct += 1.0 / (double)(j+1);
+						correct += 1.0 / (j+1);
 						break;
 					}
 				}
@@ -250,7 +250,7 @@ public class LogisticFuse {
 			//System.out.println(testFiles[i].getName() + " " + emotion);
 			
 		}
-		double accuracy = correct / (double) total;
+		double accuracy = correct / total;
 		System.out.println(accuracy * 100 + "%");
 	}
 	
@@ -316,6 +316,7 @@ public class LogisticFuse {
 	/**
 	 * @return
 	 */
+	@SuppressWarnings("resource")
 	public String getSentiment() {
 		String sentiment = "";
 		try {
@@ -340,6 +341,7 @@ public class LogisticFuse {
 				linenum++;
 			  //System.out.println(line);
 			}
+			br.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -386,6 +388,7 @@ public class LogisticFuse {
 		return trainClassifierEarlyFuseWithoutFeatures(dir, trainfile);
 	}
 	
+	@SuppressWarnings("unused")
 	public boolean trainClassifierEarlyFuseWithoutFeatures(File[] datas, String trainfile) {
 		_train = new LogisticMulticlassTrain(_tags, trainfile);
 		
@@ -484,9 +487,7 @@ public class LogisticFuse {
 	}
 	
 	private boolean writeToFile(String filename, boolean isAppend, String line) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename, isAppend);
+		try (FileWriter fw = new FileWriter(filename, isAppend)) {
 			fw.write(line);
 			fw.close();
 		} catch (IOException e) {

@@ -49,6 +49,7 @@ public class KMeansClusteringClassifier {
 		return _k;
 	}
 
+	@SuppressWarnings("resource")
 	private void readClusters(String filename) {
 		_meanClusterPoints = new Vector <double[]>();
 		try{
@@ -130,7 +131,7 @@ public class KMeansClusteringClassifier {
 	}
 	
 	private static void predictCluster(KMeansClusteringClassifier classifier,
-			WaveIO waveIO, MFCC mfcc, File[] files, TreeMap<String, Integer> emotionIndex) {
+			WaveIO waveIO, MFCC mfcc, File[] files, @SuppressWarnings("unused") TreeMap<String, Integer> emotionIndex) {
 		int clusterToEmotion[][] = new int[classifier.getK()][EMOTIONS.length + 1];
 		for (int i = 0; i < clusterToEmotion.length; i++) {
 			for (int j = 0; j < clusterToEmotion[0].length; j++) {
@@ -181,6 +182,7 @@ public class KMeansClusteringClassifier {
 	 * @param emotionIndex 
 	 * @deprecated
 	 */
+	@Deprecated
 	@SuppressWarnings("unused")
 	private static void showClusters(KMeansClusteringClassifier classifier,
 			WaveIO waveIO, MFCC mfcc, File[] files, TreeMap<String, Integer> emotionIndex) {
@@ -255,6 +257,7 @@ public class KMeansClusteringClassifier {
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	private static Vector <String> readEmotion(String filename) {
 		Vector <String> emotions = new Vector <String>();
 		try{

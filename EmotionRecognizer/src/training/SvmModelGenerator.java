@@ -14,7 +14,6 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import logisticregression.LogisticFuse;
 
 public class SvmModelGenerator {
 	public static class IntegerSvmNode {
@@ -84,6 +83,10 @@ public class SvmModelGenerator {
 		    index++;
 		}
 		
+		if (datas == null) {
+			return prob;
+		}
+		
 		Arrays.sort(nodes, new sortIntegerSvmNode());
 		
 		for (int i = 0; i < nodes.length; i++) {
@@ -133,6 +136,7 @@ public class SvmModelGenerator {
 		return 0;
 	}
 	
+	@SuppressWarnings("resource")
 	private HashMap<String, double[]> readFeature(String featurePath){
         HashMap<String, double[]> fList = new HashMap<>();
         try{

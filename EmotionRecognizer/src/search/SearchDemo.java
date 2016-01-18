@@ -26,7 +26,7 @@ import feature.ZeroCrossing;
 public class SearchDemo {
 	public enum Distance {
 		BHAT, CHEB, CITYBLOCK, COSINE, EUCLID, RBF
-	};
+	}
 
 	// All the scores for respective features, derived from result
 	private static final double SCORE_MFCC_CITYBLOCK = (0.6485436893203882 + 0.6116421521375079) * 100 / 2;
@@ -100,7 +100,7 @@ public class SearchDemo {
 	 *            measurement;
 	 * @return the top 20 similar audio files;
 	 */
-	public ArrayList<String> resultListOfEnergy(String query, boolean isAudio,
+	public ArrayList<String> resultListOfEnergy(String query, @SuppressWarnings("unused") boolean isAudio,
 			Distance distance) {
 		if (_emotionEnergy == null) {
 			_emotionEnergy = readFeature("data/feature/emotion_energy.txt");
@@ -126,44 +126,46 @@ public class SearchDemo {
 		case BHAT:
 			Bhattacharyya bhat = new Bhattacharyya();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						bhat.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						bhat.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CHEB:
 			Chebychev cheb = new Chebychev();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cheb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cheb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CITYBLOCK:
 			CityBlock cb = new CityBlock();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case COSINE:
 			Cosine cos = new Cosine();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cos.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cos.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case EUCLID:
 			Euclidean euc = Euclidean.getObject();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						euc.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						euc.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case RBF:
 			RBFKernel rbf = new RBFKernel();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						rbf.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						rbf.getDistance(msFeature1, f.getValue()));
 			}
+			break;
+		default:
 			break;
 		}
 
@@ -188,6 +190,7 @@ public class SearchDemo {
 	 *            measurement;
 	 * @return the top 20 similar audio files;
 	 */
+	@SuppressWarnings("unused")
 	public ArrayList<String> resultListOfMfcc(String query, boolean isAudio,
 			Distance distance) {
 		if (_emotionMfcc == null) {
@@ -215,44 +218,46 @@ public class SearchDemo {
 		case BHAT:
 			Bhattacharyya bhat = new Bhattacharyya();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						bhat.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						bhat.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CHEB:
 			Chebychev cheb = new Chebychev();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cheb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cheb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CITYBLOCK:
 			CityBlock cb = new CityBlock();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case COSINE:
 			Cosine cos = new Cosine();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cos.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cos.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case EUCLID:
 			Euclidean euc = Euclidean.getObject();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						euc.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						euc.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case RBF:
 			RBFKernel rbf = new RBFKernel();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						rbf.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						rbf.getDistance(msFeature1, f.getValue()));
 			}
+			break;
+		default:
 			break;
 		}
 
@@ -278,7 +283,7 @@ public class SearchDemo {
 	 * @return the top 20 similar audio files;
 	 */
 	public ArrayList<String> resultListOfZeroCrossing(String query,
-			boolean isAudio, Distance distance) {
+			@SuppressWarnings("unused") boolean isAudio, Distance distance) {
 		if (_emotionZeroCrossing == null) {
 			_emotionZeroCrossing = readFeature("data/feature/emotion_zerocrossing.txt");
 		}
@@ -303,44 +308,46 @@ public class SearchDemo {
 		case BHAT:
 			Bhattacharyya bhat = new Bhattacharyya();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						bhat.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						bhat.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CHEB:
 			Chebychev cheb = new Chebychev();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cheb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cheb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CITYBLOCK:
 			CityBlock cb = new CityBlock();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case COSINE:
 			Cosine cos = new Cosine();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cos.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cos.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case EUCLID:
 			Euclidean euc = Euclidean.getObject();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						euc.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						euc.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case RBF:
 			RBFKernel rbf = new RBFKernel();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						rbf.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						rbf.getDistance(msFeature1, f.getValue()));
 			}
+			break;
+		default:
 			break;
 		}
 
@@ -365,6 +372,7 @@ public class SearchDemo {
 	 *            measurement;
 	 * @return the top 20 similar audio files;
 	 */
+	@SuppressWarnings("unused")
 	public ArrayList<String> resultListOfSpectrum(String query,
 			boolean isAudio, Distance distance) {
 		if (_emotionSpectrum == null) {
@@ -391,44 +399,46 @@ public class SearchDemo {
 		case BHAT:
 			Bhattacharyya bhat = new Bhattacharyya();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						bhat.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						bhat.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CHEB:
 			Chebychev cheb = new Chebychev();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cheb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cheb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case CITYBLOCK:
 			CityBlock cb = new CityBlock();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cb.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cb.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case COSINE:
 			Cosine cos = new Cosine();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						cos.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						cos.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case EUCLID:
 			Euclidean euc = Euclidean.getObject();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						euc.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						euc.getDistance(msFeature1, f.getValue()));
 			}
 			break;
 		case RBF:
 			RBFKernel rbf = new RBFKernel();
 			for (Map.Entry<String, double[]> f : trainFeatureList.entrySet()) {
-				simList.put((String) f.getKey(),
-						rbf.getDistance(msFeature1, (double[]) f.getValue()));
+				simList.put(f.getKey(),
+						rbf.getDistance(msFeature1, f.getValue()));
 			}
+			break;
+		default:
 			break;
 		}
 
@@ -478,6 +488,17 @@ public class SearchDemo {
 			resultF1 = resultListOfZeroCrossing(query, isAudio, d1);
 			weightF1 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -499,6 +520,17 @@ public class SearchDemo {
 			resultF2 = resultListOfZeroCrossing(query, isAudio, d2);
 			weightF2 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -575,6 +607,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF1 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -597,6 +640,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF2 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -619,6 +673,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF3 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -709,6 +774,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF1 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -731,6 +807,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF2 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -753,6 +840,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF3 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -775,6 +873,17 @@ public class SearchDemo {
 					Distance.CITYBLOCK);
 			weightF4 = SCORE_ZCR_CITYBLOCK;
 			break;
+		case ENERGYMS:
+		case ENERGYZCR:
+		case ENERGY_MS_ZCR:
+		case MFCCENERGY:
+		case MFCCMS:
+		case MFCCZCR:
+		case MFCC_ENERGY_MS:
+		case MFCC_ENERGY_MS_ZCR:
+		case MFCC_ENERGY_ZCR:
+		case MFCC_MS_ZCR:
+		case MSZCR:
 		default:
 			break;
 		}
@@ -846,6 +955,7 @@ public class SearchDemo {
 	 * @return the map of training features, Key is the name of file, Value is
 	 *         the array/vector of features.
 	 */
+	@SuppressWarnings("resource")
 	private HashMap<String, double[]> readFeature(String featurePath) {
 		HashMap<String, double[]> fList = new HashMap<>();
 		try {

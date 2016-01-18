@@ -44,6 +44,7 @@ public class AudioFeaturesGenerator {
 		return readIemocapLabelFile(labelPath);
 	}
 	
+	@SuppressWarnings("resource")
 	private Vector <String> readIemocapLabelFile(String filename) {
 		Vector <String> lines = new Vector <String>();
 		try{
@@ -136,6 +137,7 @@ public class AudioFeaturesGenerator {
 	 * @param filename
 	 * @return
 	 */
+	@Deprecated
 	public boolean computeIempcapMFCC(File[] audioFiles, String filename) {
 		writeToFile(filename, false, "");
 		for (int i = 0; i < audioFiles.length; i++) {
@@ -301,9 +303,7 @@ public class AudioFeaturesGenerator {
 	}
 	
 	private boolean writeToFile(String filename, boolean isAppend, String line) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename, isAppend);
+		try (FileWriter fw = new FileWriter(filename, isAppend)){
 			fw.write(line);
 			fw.close();
 		} catch (IOException e) {

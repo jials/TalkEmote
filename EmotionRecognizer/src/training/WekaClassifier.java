@@ -153,9 +153,7 @@ public class WekaClassifier {
 	}
 
 	private boolean writeToFile(String filename, boolean isAppend, String line) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename, isAppend);
+		try (FileWriter fw = new FileWriter(filename, isAppend)) {
 			fw.write(line);
 			fw.close();
 		} catch (IOException e) {

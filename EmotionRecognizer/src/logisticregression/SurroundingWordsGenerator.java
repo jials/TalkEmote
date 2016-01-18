@@ -72,6 +72,7 @@ public class SurroundingWordsGenerator {
 		return featureVector;
 	}
 	
+	@SuppressWarnings("resource")
 	public boolean readTranscripts() {
 		try {
 			File file = new File(FILE_TRANSCRIPTS);
@@ -99,7 +100,8 @@ public class SurroundingWordsGenerator {
 	public boolean readSurroundingWordFile() {
 		try {
 			File file = new File(FILE_SURROUNDING_WORDS);
-		    BufferedReader br = new BufferedReader(new FileReader(file));
+		    @SuppressWarnings("resource")
+			BufferedReader br = new BufferedReader(new FileReader(file));
 		    for(String line; (line = br.readLine()) != null; ) {
 		        // process the line.
 		        line = line.trim().toLowerCase();
@@ -176,9 +178,7 @@ public class SurroundingWordsGenerator {
 	}
 
 	private boolean writeToFile(String filename, boolean isAppend, String line) {
-		FileWriter fw;
-		try {
-			fw = new FileWriter(filename, isAppend);
+		try (FileWriter fw = new FileWriter(filename, isAppend)) {
 			fw.write(line);
 			fw.close();
 		} catch (IOException e) {
@@ -216,6 +216,7 @@ public class SurroundingWordsGenerator {
 		return false;
 	}
 	
+	@SuppressWarnings("resource")
 	private boolean readStopWordsFile(String trainFile) {
 		try {
 			File file = new File(trainFile);
@@ -240,6 +241,7 @@ public class SurroundingWordsGenerator {
 		return true;
 	}
 	
+	@SuppressWarnings("resource")
 	private boolean readTransFile(String filename, HashSet <String> targetFileNames) {
 		try{
             FileReader fr = new FileReader(filename);
