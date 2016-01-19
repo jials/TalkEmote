@@ -26,6 +26,14 @@ public class EmotionRecognizerMain {
 	};
 		
 	public static void main(String[] args) {
+		//useWebRecognizer();
+		new SoundEffectDemo();
+	}
+
+	/**
+	 * @param search
+	 */
+	public static void useWebRecognizer() {
 		SearchDemo search = new SearchDemo();
 		File emotionFile = new File(DEFAULT_FILE);
 		String emotionString = getEmotionString(search, emotionFile);
