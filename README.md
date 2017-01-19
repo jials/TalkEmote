@@ -1,4 +1,3 @@
 # TalkEmote
-A Speech Recognizer and Emotional Speech Android Application.
-
-To try the logic of the app, you can visit http://128.199.130.147/.
+- An Android App that is able to do speech recognition and speech emotion recognition. 
+- Integrated with Facebook Graph API to automatically post recorded speech and its emotion as status update. 
